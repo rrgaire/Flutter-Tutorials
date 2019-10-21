@@ -10,64 +10,74 @@ class TransactionList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 348,
-      child: userTransactions.isEmpty
-          ? Container(
-              child: Column(
-                children: <Widget>[
-                  Text(
-                    'Opps! No transactions yet..',
-                    style: Theme.of(context).textTheme.title,
-                  ),
-                  SizedBox(
-                    height: 18,
-                  ),
-                  Container(
-                    height: 300,
-                    child: Image.asset(
-                      'assets/images/waiting.png',
-                      fit: BoxFit.cover,
+    return userTransactions.isEmpty
+        ? LayoutBuilder(
+            builder: (ctx, constraints) {
+              return Container(
+                child: Column(
+                  children: <Widget>[
+                    Text(
+                      'Opps! No transactions yet..',
+                      style: Theme.of(context).textTheme.title,
                     ),
-                  ),
-                ],
-              ),
-            )
-          : ListView.builder(
-              itemBuilder: (ctx, index) {
-                return Card(
-                  margin: EdgeInsets.symmetric(vertical: 10, horizontal: 6),
-                  elevation: 6,
-                  child: ListTile(
-                    leading: CircleAvatar(
-                      radius: 30,
-                      child: Padding(
-                        padding: EdgeInsets.all(6),
-                        child: FittedBox(
-                          child: Text(
-                            'Rs ${userTransactions[index].price}',
-                          ),
+                    SizedBox(
+                      height: constraints.maxHeight * 0.1,
+                    ),
+                    Container(
+                      height: constraints.maxHeight * 0.7,
+                      child: Image.asset(
+                        'assets/images/waiting.png',
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            },
+          )
+        : ListView.builder(
+            itemBuilder: (ctx, index) {
+              return Card(
+                margin: EdgeInsets.symmetric(vertical: 10, horizontal: 6),
+                elevation: 6,
+                child: ListTile(
+                  leading: CircleAvatar(
+                    radius: 30,
+                    child: Padding(
+                      padding: EdgeInsets.all(6),
+                      child: FittedBox(
+                        child: Text(
+                          'Rs ${userTransactions[index].price}',
                         ),
                       ),
                     ),
-                    title: Text(
-                      userTransactions[index].tname,
-                      style: Theme.of(context).textTheme.title,
-                    ),
-                    subtitle: Text(
-                      DateFormat.yMMMMd().format(userTransactions[index].date),
-                    ),
-                    trailing: IconButton(
-                      icon: Icon(Icons.delete),
-                      color: Theme.of(context).errorColor,
-                      onPressed: () => removeTransaction(userTransactions[index].tid),
-                    ),
                   ),
-                );
-              },
-              itemCount: userTransactions.length,
-            ),
-    );
+                  title: Text(
+                    userTransactions[index].tname,
+                    style: Theme.of(context).textTheme.title,
+                  ),
+                  subtitle: Text(
+                    DateFormat.yMMMMd().format(userTransactions[index].date),
+                  ),
+                  trailing: MediaQuery.of(context).size.width > 500
+                      ? FlatButton.icon(
+                          icon: Icon(Icons.delete),
+                          onPressed: () =>
+                              removeTransaction(userTransactions[index].tid),
+                          label: Text('Delete'),
+                          textColor: Theme.of(context).errorColor,
+                        )
+                      : IconButton(
+                          icon: Icon(Icons.delete),
+                          color: Theme.of(context).errorColor,
+                          onPressed: () =>
+                              removeTransaction(userTransactions[index].tid),
+                        ),
+                ),
+              );
+            },
+            itemCount: userTransactions.length,
+          );
   }
 }
 
